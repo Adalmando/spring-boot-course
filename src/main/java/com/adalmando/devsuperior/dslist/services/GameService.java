@@ -4,6 +4,7 @@ import com.adalmando.devsuperior.dslist.dto.GameDTO;
 import com.adalmando.devsuperior.dslist.dto.GameMinDTO;
 import com.adalmando.devsuperior.dslist.entities.Game;
 import com.adalmando.devsuperior.dslist.exceptions.EntityNotFoundException;
+import com.adalmando.devsuperior.dslist.projections.GameMinProjection;
 import com.adalmando.devsuperior.dslist.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,5 +30,11 @@ public class GameService {
         Game game = gameRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Game não encontrado!"));
         return new GameDTO(game);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GameMinDTO> findByList(Long listId){
+        List<GameMinProjection> games = gameRepository.searchByList(listId);
+        return games.stream().map(GameMinDTO::new).toList();
     }
 }
